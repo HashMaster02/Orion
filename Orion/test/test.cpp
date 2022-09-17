@@ -1,4 +1,4 @@
-#include "Renderer.h"
+#include "src/Renderer.h"
 
 int main()
 {
@@ -8,5 +8,5 @@ int main()
 	{
 		renderer.OnUpdate();
 	}
-	
+
 }
