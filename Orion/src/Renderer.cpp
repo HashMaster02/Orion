@@ -3,16 +3,22 @@
 
 Renderer::Renderer()
 {
-    this->window = Create();
-}
-
-GLFWwindow* Renderer::Create()
-{
-    WindowProperties props;
     props.Width = 1280;
     props.Height = 720;
-    props.Title = "Test Window";
+    props.Title = "Default Window";
+    this->window = Create(props);
+}
 
+Renderer::Renderer(int w, int h, const char* t)
+{
+    props.Width = w;
+    props.Height = h;
+    props.Title = t;
+    this->window = Create(props);
+}
+
+GLFWwindow* Renderer::Create(WindowProperties props)
+{
     if (!isRunning) {
         glfwInit();
         isRunning = true;

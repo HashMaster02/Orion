@@ -2,7 +2,7 @@
 
 int main()
 {
-	Renderer renderer;
+	Renderer renderer(1920, 1080, "Renderer");
 
 	while (renderer.IsRunning())
 	{

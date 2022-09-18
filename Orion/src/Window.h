@@ -14,6 +14,5 @@ public:
 public:
 	virtual void OnUpdate() = 0;
 	virtual bool IsRunning() = 0;
-	virtual GLFWwindow* Create() = 0;
-
+	virtual GLFWwindow* Create(WindowProperties props) = 0;
 };
