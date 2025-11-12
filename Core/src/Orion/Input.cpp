@@ -6,6 +6,7 @@ void processInput(GLFWwindow *window) {
     glfwSetWindowShouldClose(window, 1);
 }
 
+// DOES NOT UPDATE ORION WINDOW PARAMETERS
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
