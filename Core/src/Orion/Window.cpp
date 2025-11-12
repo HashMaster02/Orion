@@ -21,6 +21,7 @@ void create_window(OrionWindow *window_params) {
     printf("Failed to initialize GLAD");
     return;
   }
+  glEnable(GL_DEPTH_TEST);
   window_params->window = window;
 
 }
