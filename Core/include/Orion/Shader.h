@@ -1,4 +1,5 @@
 #pragma once
+#include "glm/glm.hpp"
 
 struct myVec4 {
   float v1;
@@ -11,3 +12,4 @@ unsigned int build_shader_program(const char *vertexSourcePath,
                                   const char *fragmentSourcePath);
 
 void setUniformVec4f(unsigned int shader, const char *uniform, myVec4 values);
+void setUniformMat4fv(unsigned int shader, const char *uniform, glm::mat4 &matrix);

@@ -95,3 +95,15 @@ void setUniformVec4f(unsigned int shader, const char *uniform, myVec4 values) {
 
   glUniform4f(vertexColorLoc, values.v1, values.v2, values.v3, values.v4);
 }
+
+void setUniformMat4fv(unsigned int shader, const char *uniform, glm::mat4 &matrix) {
+
+  int vertexColorLoc = glGetUniformLocation(shader, uniform);
+
+  if (vertexColorLoc == -1) {
+    std::printf("ERROR: UNIFORM NOT FOUND: %s", uniform);
+    return;
+  }
+
+  glUniformMatrix4fv(vertexColorLoc, 1, GL_FALSE, &matrix[0][0]);
+}
