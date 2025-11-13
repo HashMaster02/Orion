@@ -1,5 +1,6 @@
 #include "Orion/Object.h"
 
+namespace Orion {
 // Predefined objects
 float default_cube[] = {
     -0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
@@ -75,4 +76,4 @@ unsigned int create_object(float vertices[], size_t vertex_array_size) {
   return VAO;
 }
 
-    
+} 

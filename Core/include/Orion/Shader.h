@@ -1,15 +1,9 @@
 #pragma once
 #include "glm/glm.hpp"
 
-struct myVec4 {
-  float v1;
-  float v2;
-  float v3;
-  float v4;
-};
+namespace Orion {
+  unsigned int build_shader_program(const char *vertexSourcePath, const char *fragmentSourcePath);
 
-unsigned int build_shader_program(const char *vertexSourcePath,
-                                  const char *fragmentSourcePath);
-
-void setUniformVec4f(unsigned int shader, const char *uniform, myVec4 values);
-void setUniformMat4fv(unsigned int shader, const char *uniform, glm::mat4 &matrix);
+  void setUniformVec4f(unsigned int shader, const char *uniform, glm::vec4 values);
+  void setUniformMat4fv(unsigned int shader, const char *uniform, glm::mat4 &matrix);
+}

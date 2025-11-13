@@ -1,16 +1,18 @@
 #pragma once
 #include <GLFW/glfw3.h>
 
-struct OrionWindow {
-    GLFWwindow* window;
-    int width;
-    int height;
-    const char* title;
+namespace Orion {
+    struct Window {
+        GLFWwindow* window;
+        int width;
+        int height;
+        const char* title;
 
-    void(* GLFWframebuffersizefun) (GLFWwindow *window, int width, int height);
-};
+        void(* GLFWframebuffersizefun) (GLFWwindow *window, int width, int height);
+    };
 
-void create_window(OrionWindow *window_params);
+    void create_window(Orion::Window *window_params);
 
-void destroy_window(OrionWindow *myWindow);
-int close_window(OrionWindow *myWindow);
+    void destroy_window(Orion::Window *myWindow);
+    int close_window(Orion::Window *myWindow);
+}

@@ -1,3 +1,5 @@
 #pragma once
 
-unsigned int generate_texture(const char *imagePath);
+namespace Orion {
+    unsigned int generate_texture(const char *imagePath);
+}
