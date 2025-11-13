@@ -3,6 +3,8 @@
 
 namespace Orion {
   unsigned int build_shader_program(const char *vertexSourcePath, const char *fragmentSourcePath);
+  void use_shader(unsigned int shader);
+  void destroy_shader(unsigned int shader);
 
   void setUniformVec4f(unsigned int shader, const char *uniform, glm::vec4 values);
   void setUniformMat4fv(unsigned int shader, const char *uniform, glm::mat4 &matrix);

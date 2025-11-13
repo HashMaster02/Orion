@@ -84,6 +84,13 @@ namespace Orion {
 
     return shaderProgram;
   }
+  void use_shader(unsigned int shader) {
+      glUseProgram(shader);
+  }
+
+  void destroy_shader(unsigned int shader) {
+    glDeleteProgram(shader);
+  }
 
   void setUniformVec4f(unsigned int shader, const char *uniform, glm::vec4 values) {
 
