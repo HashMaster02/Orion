@@ -28,4 +28,8 @@ namespace Orion {
     stbi_image_free(data);
     return texture;
   }
+
+  void use_texture2d(unsigned int texture) {
+    glBindTexture(GL_TEXTURE_2D, texture);
+  }
 }
