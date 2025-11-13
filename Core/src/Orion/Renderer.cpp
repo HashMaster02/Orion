@@ -6,7 +6,7 @@ namespace Orion {
         glBindVertexArray(VAO);
     }
 
-    void use_shader(unsigned int shader) {
-        glUseProgram(shader);
+    void draw(unsigned int total_vertices) {
+        glDrawArrays(GL_TRIANGLES, 0, total_vertices);
     }
 }
