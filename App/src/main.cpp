@@ -120,7 +120,6 @@ int main() {
     glfwSwapBuffers(orion_window->window);
     glfwPollEvents();
   }
-
   glDeleteProgram(shaderProgram);
   destroy_window(orion_window);
 
