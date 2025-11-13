@@ -4,72 +4,11 @@
 #include "Orion/Shader.h"
 #include "Orion/Texture.h"
 #include "Orion/Window.h"
+#include "Orion/Object.h"
 #include "Utils/stb_image.h"
-
-unsigned int create_triangle_object(float vertices[],
-                                    size_t vertex_array_size) {
-  unsigned int VAO, VBO;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-
-  glBindVertexArray(VAO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, vertex_array_size, vertices, GL_STATIC_DRAW);
-
-  // Position Attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-
-  // Color Attribute
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
-                        (void *)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-
-  return VAO;
-}
-
-unsigned int create_index_buffer_object(float vertices[],
-                                        size_t vertex_array_size,
-                                        unsigned int indices[],
-                                        size_t index_array_size) {
-  unsigned int VAO, VBO, EBO;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-  glGenBuffers(1, &EBO);
-
-  glBindVertexArray(VAO);
-
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, vertex_array_size, vertices, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_array_size, indices,
-               GL_STATIC_DRAW);
-
-  // Position Attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
-  glEnableVertexAttribArray(0);
-
-  // Color Attribute
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                        (void *)(3 * sizeof(float)));
-  glEnableVertexAttribArray(1);
-
-  // Texture Coordinates Attribute
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                        (void *)(6 * sizeof(float)));
-  glEnableVertexAttribArray(2);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
-
-  return VAO;
-}
-
+#include "glm/glm.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 int main() {
   // Create window
@@ -85,41 +24,67 @@ int main() {
     return -1;
   }
 
-  float vertices[] = {
-      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-      -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
+  // world space positions of our cubes
+  glm::vec3 cubePositions[] = {
+      glm::vec3( 0.0f,  0.0f,  0.0f),
+      glm::vec3( 2.0f,  5.0f, -15.0f),
+      glm::vec3(-1.5f, -2.2f, -2.5f),
+      glm::vec3(-3.8f, -2.0f, -12.3f),
+      glm::vec3( 2.4f, -0.4f, -3.5f),
+      glm::vec3(-1.7f,  3.0f, -7.5f),
+      glm::vec3( 1.3f, -2.0f, -2.5f),
+      glm::vec3( 1.5f,  2.0f, -2.5f),
+      glm::vec3( 1.5f,  0.2f, -1.5f),
+      glm::vec3(-1.3f,  1.0f, -1.5f)
   };
-  unsigned int indices[] = {0, 1, 3, 1, 2, 3};
 
-  unsigned int shaderProgram = build_shader_program("./App/shaders/vertex.glsl", "./App/shaders/fragment_vertcol.glsl");
+  unsigned int shaderProgram = build_shader_program("./App/shaders/default_vertex.glsl", "./App/shaders/default_fragment.glsl");
   if (shaderProgram == 0) {
     printf("ERROR: Couldn't build shader.");
     return -1;
   }
+  glUseProgram(shaderProgram);
+
   unsigned int texture = generate_texture("./App/images/wall.jpg");
-  unsigned int VAO = create_index_buffer_object(vertices, sizeof(vertices),
-                                                indices, sizeof(indices));
+  unsigned int VAO_cube = create_object(default_cube, default_cube_size);
+
+  glm::mat4 projection    = glm::mat4(1.0f);
+  projection = glm::perspective(glm::radians(45.0f), (float)orion_window->width / (float)orion_window->height, 0.1f, 100.0f);
+  setUniformMat4fv(shaderProgram, "projection", projection);
 
   while (!close_window(orion_window)) {
     processInput(orion_window->window);
 
-    // render
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glm::vec4 clearCol(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(clearCol.x, clearCol.y, clearCol.z, clearCol.w);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
     glBindTexture(GL_TEXTURE_2D, texture);
 
-    // draw object
-    glBindVertexArray(VAO);
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glm::mat4 view_mat = glm::mat4(1.0f);
+    float radius = 10.0f;
+    float camX = static_cast<float>(sin(glfwGetTime()) * radius);
+    float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
+    view_mat = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    setUniformMat4fv(shaderProgram, "view", view_mat);
+    
+    glBindVertexArray(VAO_cube);
+    for (unsigned int i = 0; i < 10; i++)
+    {
+        // calculate the model matrix for each object and pass it to shader before drawing
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, cubePositions[i]);
+        float angle = 20.0f * i;
+        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        setUniformMat4fv(shaderProgram, "model", model);
+
+        glDrawArrays(GL_TRIANGLES, 0, (unsigned int)(default_cube_size / sizeof(float)));
+    }
 
     glfwSwapBuffers(orion_window->window);
     glfwPollEvents();
   }
+
   glDeleteProgram(shaderProgram);
   destroy_window(orion_window);
 
