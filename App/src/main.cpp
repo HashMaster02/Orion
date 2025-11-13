@@ -46,7 +46,7 @@ int main() {
   }
   Orion::use_shader(shaderProgram);
 
-  unsigned int texture = Orion::generate_texture("./App/images/wall.jpg");
+  unsigned int texture = Orion::generate_texture("./App/images/woodenbox.jpg");
   if (texture == 0) {
     printf("ERROR: Failed to generate texture.");
     return -1;
