@@ -11,8 +11,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -75,9 +73,6 @@ int main() {
   Orion::setUniformMat4fv(shaderProgram, "projection", projection);
 
   while (!close_window(orion_window)) {
-    float currentFrame = glfwGetTime();
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
     processInput(orion_window->window);
 
     glm::vec4 clearCol(0.2f, 0.3f, 0.3f, 1.0f);
@@ -112,7 +107,7 @@ int main() {
 }
 
 void processInput(GLFWwindow *window) {
-  const float cameraSpeed = 6.5f * deltaTime;
+  const float cameraSpeed = 16.5f * Orion::delta_time();
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, 1);
   }
