@@ -17,12 +17,14 @@ namespace Orion {
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, window_params->GLFWframebuffersizefun);
+    glfwSetCursorPosCallback(window, window_params->GLFWcursorposfun);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       printf("Failed to initialize GLAD");
       return;
     }
     glEnable(GL_DEPTH_TEST);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_params->window = window;
 
   }
