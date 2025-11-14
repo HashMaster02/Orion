@@ -5,7 +5,6 @@
 #include "Orion/Window.h"
 #include "Orion/Object.h"
 #include "Orion/Renderer.h"
-#include "Utils/stb_image.h"
 #include "Orion/Camera.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,12 +14,11 @@ void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 
-// cursor positions 
+// cursor variables
 float lastX = 640;
 float lastY = 360;
 float yaw = -90.0f;
 float pitch = 0.0f;
-
 bool firstMouse = true; 
 
 int main() {
