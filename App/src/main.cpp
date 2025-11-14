@@ -1,15 +1,29 @@
 #include <glad/glad.h>
 #include <iostream>
-#include "Orion/Input.h"
 #include "Orion/Shader.h"
 #include "Orion/Texture.h"
 #include "Orion/Window.h"
 #include "Orion/Object.h"
 #include "Orion/Renderer.h"
 #include "Utils/stb_image.h"
-#include "glm/glm.hpp"
+#include "Orion/Camera.h"
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+void processInput(GLFWwindow *window);
+void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+
+// cursor positions 
+float lastX = 640;
+float lastY = 360;
+float yaw = -90.0f;
+float pitch = 0.0f;
+
+bool firstMouse = true; 
 
 int main() {
   // Create window
@@ -17,7 +31,8 @@ int main() {
   orion_window->width= 1280;
   orion_window->height = 720;
   orion_window->title = "Orion";
-  orion_window->GLFWframebuffersizefun= Orion::framebuffer_size_callback;
+  orion_window->GLFWframebuffersizefun= framebuffer_size_callback;
+  orion_window->GLFWcursorposfun= mouse_callback;
 
   Orion::create_window(orion_window);
   if(!orion_window->window) {
@@ -60,17 +75,17 @@ int main() {
   Orion::setUniformMat4fv(shaderProgram, "projection", projection);
 
   while (!close_window(orion_window)) {
-    Orion::processInput(orion_window->window);
+    float currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+    processInput(orion_window->window);
 
     glm::vec4 clearCol(0.2f, 0.3f, 0.3f, 1.0f);
     glClearColor(clearCol.x, clearCol.y, clearCol.z, clearCol.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::mat4 view_mat = glm::mat4(1.0f);
-    float radius = 10.0f;
-    float camX = static_cast<float>(sin(glfwGetTime()) * radius);
-    float camZ = static_cast<float>(cos(glfwGetTime()) * radius);
-    view_mat = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    view_mat = glm::lookAt(Orion::cameraPos, Orion::cameraPos + Orion::cameraFront, Orion::cameraUp);
     Orion::setUniformMat4fv(shaderProgram, "view", view_mat);
     
     Orion::bind_vertex_array(VAO_cube);
@@ -94,4 +109,60 @@ int main() {
   Orion::destroy_window(orion_window);
 
   return 0;
+}
+
+void processInput(GLFWwindow *window) {
+  const float cameraSpeed = 6.5f * deltaTime;
+  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    glfwSetWindowShouldClose(window, 1);
+  }
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    Orion::cameraPos += cameraSpeed * Orion::cameraFront;
+  }
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    Orion::cameraPos -= cameraSpeed * Orion::cameraFront;
+  }
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    Orion::cameraPos -= glm::normalize(glm::cross(Orion::cameraFront, Orion::cameraUp)) * cameraSpeed;
+  }
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    Orion::cameraPos += glm::normalize(glm::cross(Orion::cameraFront, Orion::cameraUp)) * cameraSpeed;
+  }
+}
+
+void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
+  if (firstMouse) {
+    lastX = xpos;
+    lastY = ypos;
+    firstMouse = false;
+  }
+
+  float xoffset = xpos - lastX;
+  float yoffset = lastY - ypos;
+
+  lastX = xpos;
+  lastY = ypos;
+
+  const float sensitivity = 0.1f;
+  xoffset *= sensitivity;
+  yoffset *= sensitivity;
+
+  yaw   += xoffset;
+  pitch += yoffset;
+
+  if(pitch > 89.0f)
+      pitch = 89.0f;
+  if(pitch < -89.0f)
+      pitch = -89.0f;
+
+  glm::vec3 direction;
+  direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+  direction.y = sin(glm::radians(pitch));
+  direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+  Orion::cameraFront = glm::normalize(direction);
+
+}
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
 }
