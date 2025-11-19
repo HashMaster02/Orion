@@ -6,6 +6,7 @@
 #include "Orion/Object.h"
 #include "Orion/Renderer.h"
 #include "Orion/Camera.h"
+#include "Orion/Event.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -21,6 +22,17 @@ float yaw = -90.0f;
 float pitch = 0.0f;
 bool firstMouse = true; 
 
+void test_callback(const Orion::Event& event, void* userData) {
+    std::cout << "Event received! Type: " << event.type << std::endl;
+    if (event.type == Orion::EVENT_KEY_PRESSED) {
+        std::cout << "Key: " << event.data.key_pressed_data.GLFWKeyCode << std::endl;
+    }
+    else {
+        std::cout << "X: " << event.data.mouse_move_data.xpos << std::endl;
+        std::cout << "Y: " << event.data.mouse_move_data.ypos << std::endl;
+    }
+}
+
 int main() {
   // Create window
   Orion::Window *orion_window = (Orion::Window*)malloc(sizeof(Orion::Window));
@@ -31,6 +43,11 @@ int main() {
   orion_window->GLFWcursorposfun= mouse_callback;
 
   Orion::create_window(orion_window);
+  Orion::init_event_system(orion_window->window);
+  Orion::register_event(Orion::EVENT_KEY_PRESSED, Orion::close_window);
+  Orion::register_event(Orion::EVENT_KEY_PRESSED, test_callback);
+  Orion::register_event(Orion::EVENT_MOUSE_CURSOR_MOVE, test_callback);
+
   if(!orion_window->window) {
     printf("Failed to create window");
     return -1;
@@ -70,7 +87,7 @@ int main() {
   projection = glm::perspective(glm::radians(45.0f), (float)orion_window->width / (float)orion_window->height, 0.1f, 100.0f);
   Orion::setUniformMat4fv(shaderProgram, "projection", projection);
 
-  while (!close_window(orion_window)) {
+  while (Orion::Running) {
     processInput(orion_window->window);
 
     glm::vec4 clearCol(0.2f, 0.3f, 0.3f, 1.0f);
@@ -95,7 +112,7 @@ int main() {
     }
 
     glfwSwapBuffers(orion_window->window);
-    glfwPollEvents();
+    Orion::poll_events();
   }
 
   Orion::destroy_shader(shaderProgram);
@@ -106,9 +123,6 @@ int main() {
 
 void processInput(GLFWwindow *window) {
   const float cameraSpeed = 16.5f * Orion::delta_time();
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, 1);
-  }
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
     Orion::cameraPos += cameraSpeed * Orion::cameraFront;
   }
@@ -122,6 +136,7 @@ void processInput(GLFWwindow *window) {
     Orion::cameraPos += glm::normalize(glm::cross(Orion::cameraFront, Orion::cameraUp)) * cameraSpeed;
   }
 }
+
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
   if (firstMouse) {
