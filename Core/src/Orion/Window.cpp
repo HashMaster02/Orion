@@ -3,6 +3,8 @@
 #include <iostream>
 
 namespace Orion {
+  int Running = 1;
+
   void create_window(Orion::Window *window_params) {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -33,7 +35,29 @@ namespace Orion {
       glfwDestroyWindow(myWindow->window);
   }
 
-  int close_window(Orion::Window *myWindow) {
-      return glfwWindowShouldClose(myWindow->window);
+  void close_window(const Event& event, void* userData) {
+    if (event.type == EVENT_KEY_PRESSED) {
+      int keycode = event.data.key_pressed_data.GLFWKeyCode;
+      if (keycode == GLFW_KEY_ESCAPE) {
+        Running = 0;
+      }
+    }
+  }
+
+  void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (action == GLFW_PRESS) {
+        Event evt;
+        evt.type = EVENT_KEY_PRESSED;
+        evt.data.key_pressed_data.GLFWKeyCode = key;
+        dispatch_event(evt);
+    }
+  }
+
+  void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
+    Event evt;
+    evt.type = EVENT_MOUSE_CURSOR_MOVE;
+    evt.data.mouse_move_data.xpos = static_cast<int>(xpos);
+    evt.data.mouse_move_data.ypos = static_cast<int>(ypos);
+    dispatch_event(evt);
   }
 }
