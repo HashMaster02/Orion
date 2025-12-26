@@ -11,7 +11,11 @@ APP_DIR = App
 
 # Output
 CORE_LIB = $(BUILD_DIR)/libcore.a
-APP_EXEC = $(BUILD_DIR)/app
+ifeq ($(OS),Windows_NT)
+    APP_EXEC = $(BUILD_DIR)/app.exe
+else
+    APP_EXEC = $(BUILD_DIR)/app
+endif
 
 .PHONY: all clean core app
 
