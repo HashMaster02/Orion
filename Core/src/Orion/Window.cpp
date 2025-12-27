@@ -6,6 +6,7 @@ namespace Orion {
   int Running = 1;
 
   void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+    (void)window; // UNUSED VARIABLE
     glViewport(0, 0, width, height);
   }
 
@@ -39,6 +40,7 @@ namespace Orion {
   }
 
   void close_window(const Event& event, void* userData) {
+    (void)userData; // UNUSED VARIABLE
     if (event.type == EVENT_KEY_PRESSED) {
       int keycode = event.data.key_pressed_data.GLFWKeyCode;
       if (keycode == GLFW_KEY_ESCAPE) {
@@ -48,6 +50,9 @@ namespace Orion {
   }
 
   void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    (void)window; // UNUSED VARIABLE
+    (void)scancode; // UNUSED VARIABLE
+    (void)mods; // UNUSED VARIABLE
     if (action == GLFW_PRESS) {
         Event evt;
         evt.type = EVENT_KEY_PRESSED;
@@ -57,6 +62,7 @@ namespace Orion {
   }
 
   void cursor_callback(GLFWwindow* window, double xpos, double ypos) {
+    (void)window; // UNUSED VARIABLE
     Event evt;
     evt.type = EVENT_MOUSE_CURSOR_MOVE;
     evt.data.mouse_move_data.xpos = static_cast<int>(xpos);
