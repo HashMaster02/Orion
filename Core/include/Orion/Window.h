@@ -9,8 +9,6 @@ namespace Orion {
         int width;
         int height;
         const char* title;
-
-        void(* GLFWcursorposfun) (GLFWwindow *window, double xpos, double ypos);
     };
 
     void create_window(Orion::Window *window_params);

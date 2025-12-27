@@ -23,7 +23,6 @@ namespace Orion {
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, window_params->GLFWcursorposfun);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
       printf("Failed to initialize GLAD");
