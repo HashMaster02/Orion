@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "bit": "c",
+        "fstream": "c",
+        "limits": "c",
+        "ratio": "c"
+    }
+}

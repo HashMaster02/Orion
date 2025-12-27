@@ -11,9 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void processInput(GLFWwindow *window);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void dolly_camera(GLFWwindow*  window);
 
 // cursor variables
 float lastX = 640;
@@ -39,14 +38,11 @@ int main() {
   orion_window->width= 1280;
   orion_window->height = 720;
   orion_window->title = "Orion";
-  orion_window->GLFWframebuffersizefun= framebuffer_size_callback;
   orion_window->GLFWcursorposfun= mouse_callback;
 
   Orion::create_window(orion_window);
   Orion::init_event_system(orion_window->window);
   Orion::register_event(Orion::EVENT_KEY_PRESSED, Orion::close_window);
-  Orion::register_event(Orion::EVENT_KEY_PRESSED, test_callback);
-  Orion::register_event(Orion::EVENT_MOUSE_CURSOR_MOVE, test_callback);
 
   if(!orion_window->window) {
     printf("Failed to create window");
@@ -88,14 +84,16 @@ int main() {
   Orion::setUniformMat4fv(shaderProgram, "projection", projection);
 
   while (Orion::Running) {
-    processInput(orion_window->window);
+    dolly_camera(orion_window->window);
 
     glm::vec4 clearCol(0.2f, 0.3f, 0.3f, 1.0f);
     glClearColor(clearCol.x, clearCol.y, clearCol.z, clearCol.w);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::mat4 view_mat = glm::mat4(1.0f);
-    view_mat = glm::lookAt(Orion::cameraPos, Orion::cameraPos + Orion::cameraFront, Orion::cameraUp);
+    view_mat = glm::lookAt(Orion::mainCamSettings.cameraPos,
+                           Orion::mainCamSettings.cameraPos + Orion::mainCamSettings.cameraFront,
+                           Orion::mainCamSettings.cameraUp);
     Orion::setUniformMat4fv(shaderProgram, "view", view_mat);
     
     Orion::bind_vertex_array(VAO_cube);
@@ -119,24 +117,26 @@ int main() {
   Orion::destroy_window(orion_window);
 
   return 0;
-}
 
-void processInput(GLFWwindow *window) {
-  const float cameraSpeed = 16.5f * Orion::delta_time();
+
+}
+void dolly_camera(GLFWwindow*  window) {
+
+  float cameraSpeed = 16.0f * Orion::delta_time();
+
   if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-    Orion::cameraPos += cameraSpeed * Orion::cameraFront;
+      Orion::mainCamSettings.cameraPos += cameraSpeed * Orion::mainCamSettings.cameraFront;
   }
   if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-    Orion::cameraPos -= cameraSpeed * Orion::cameraFront;
+      Orion::mainCamSettings.cameraPos -= cameraSpeed * Orion::mainCamSettings.cameraFront;
   }
   if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-    Orion::cameraPos -= glm::normalize(glm::cross(Orion::cameraFront, Orion::cameraUp)) * cameraSpeed;
+      Orion::mainCamSettings.cameraPos -= glm::normalize(glm::cross(Orion::mainCamSettings.cameraFront, Orion::mainCamSettings.cameraUp)) * cameraSpeed;
   }
   if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-    Orion::cameraPos += glm::normalize(glm::cross(Orion::cameraFront, Orion::cameraUp)) * cameraSpeed;
+      Orion::mainCamSettings.cameraPos += glm::normalize(glm::cross(Orion::mainCamSettings.cameraFront, Orion::mainCamSettings.cameraUp)) * cameraSpeed;
   }
 }
-
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
   if (firstMouse) {
@@ -167,10 +167,6 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
   direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
   direction.y = sin(glm::radians(pitch));
   direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-  Orion::cameraFront = glm::normalize(direction);
+  Orion::mainCamSettings.cameraFront = glm::normalize(direction);
 
-}
-
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
 }

@@ -10,7 +10,6 @@ namespace Orion {
         int height;
         const char* title;
 
-        void(* GLFWframebuffersizefun) (GLFWwindow *window, int width, int height);
         void(* GLFWcursorposfun) (GLFWwindow *window, double xpos, double ypos);
     };
 
