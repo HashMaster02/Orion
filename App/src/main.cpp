@@ -21,17 +21,6 @@ float yaw = -90.0f;
 float pitch = 0.0f;
 bool firstMouse = true; 
 
-void test_callback(const Orion::Event& event, void* userData) {
-    std::cout << "Event received! Type: " << event.type << std::endl;
-    if (event.type == Orion::EVENT_KEY_PRESSED) {
-        std::cout << "Key: " << event.data.key_pressed_data.GLFWKeyCode << std::endl;
-    }
-    else {
-        std::cout << "X: " << event.data.mouse_move_data.xpos << std::endl;
-        std::cout << "Y: " << event.data.mouse_move_data.ypos << std::endl;
-    }
-}
-
 int main() {
   // Create window
   Orion::Window *orion_window = (Orion::Window*)malloc(sizeof(Orion::Window));
@@ -139,6 +128,7 @@ void dolly_camera(GLFWwindow*  window) {
 }
 
 void pan_camera(const Orion::Event &event, void *data) {
+  (void)data;  // UNUSED VARIABLE
   double xpos = event.data.mouse_move_data.xpos;
   double ypos = event.data.mouse_move_data.ypos;
   if (firstMouse) {
