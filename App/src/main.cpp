@@ -11,7 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void mouse_callback(GLFWwindow *window, double xpos, double ypos);
+void pan_camera(const Orion::Event &event, void *data);
 void dolly_camera(GLFWwindow*  window);
 
 // cursor variables
@@ -38,11 +38,11 @@ int main() {
   orion_window->width= 1280;
   orion_window->height = 720;
   orion_window->title = "Orion";
-  orion_window->GLFWcursorposfun= mouse_callback;
 
   Orion::create_window(orion_window);
   Orion::init_event_system(orion_window->window);
   Orion::register_event(Orion::EVENT_KEY_PRESSED, Orion::close_window);
+  Orion::register_event(Orion::EVENT_MOUSE_CURSOR_MOVE, pan_camera);
 
   if(!orion_window->window) {
     printf("Failed to create window");
@@ -138,7 +138,9 @@ void dolly_camera(GLFWwindow*  window) {
   }
 }
 
-void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
+void pan_camera(const Orion::Event &event, void *data) {
+  double xpos = event.data.mouse_move_data.xpos;
+  double ypos = event.data.mouse_move_data.ypos;
   if (firstMouse) {
     lastX = xpos;
     lastY = ypos;
@@ -168,5 +170,4 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
   direction.y = sin(glm::radians(pitch));
   direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
   Orion::mainCamSettings.cameraFront = glm::normalize(direction);
-
 }
