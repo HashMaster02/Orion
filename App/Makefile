@@ -47,4 +47,8 @@ $(BUILD_DIR):
 
 clean:
 	@echo "Cleaning App..."
+ifeq ($(OS),Windows_NT)
+	@if exist $(subst /,\,$(TARGET)) del /q $(subst /,\,$(TARGET))
+else
 	@rm -f $(TARGET)
+endif

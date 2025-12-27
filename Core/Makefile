@@ -83,5 +83,10 @@ $(BUILD_DIR):
 
 clean:
 	@echo "Cleaning Core..."
+ifeq ($(OS),Windows_NT)
+	@if exist $(OBJ_DIR) rmdir /s /q $(OBJ_DIR)
+	@if exist $(subst /,\,$(TARGET)) del /q $(subst /,\,$(TARGET))
+else
 	@rm -rf $(OBJ_DIR)
 	@rm -f $(TARGET)
+endif

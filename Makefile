@@ -33,7 +33,11 @@ clean:
 	@echo "Cleaning..."
 	@$(MAKE) -C $(CORE_DIR) clean
 	@$(MAKE) -C $(APP_DIR) clean
+ifeq ($(OS),Windows_NT)
+	@if exist $(BUILD_DIR) rmdir /s /q $(BUILD_DIR)
+else
 	@rm -rf $(BUILD_DIR)
+endif
 
 $(BUILD_DIR):
 	@mkdir -p $(BUILD_DIR)
